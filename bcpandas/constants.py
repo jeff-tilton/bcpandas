@@ -5,6 +5,7 @@ Created on Sat Aug  3 23:20:19 2019
 """
 
 import os
+import string
 import sys
 
 import pandas as pd
@@ -34,7 +35,13 @@ IF_EXISTS_OPTIONS = ("append", "replace", "fail")
 
 
 # Text settings
-_DELIMITER_OPTIONS = (",", "|", "\t")
+invalid_delims = ("'", '"', "\\")
+_DELIMITER_OPTIONS = (
+    string.ascii_letters
+    + string.digits
+    + "".join(set(string.punctuation) - set(invalid_delims))
+    + "\t"
+)
 _QUOTECHAR_OPTIONS = ('"', "'", "`", "~")
 NEWLINE = os.linesep
 
