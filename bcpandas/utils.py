@@ -116,11 +116,12 @@ def bcp(
         raise BCPandasException(f"Bcp command failed with exit code {ret_code}")
 
 
-def get_temp_file() -> str:
+def get_temp_file(tmp_dir: str = None) -> str:
     """
     Returns full path to a temporary file without creating it.
     """
-    tmp_dir = tempfile.gettempdir()
+    if not tmp_dir:
+        tmp_dir = tempfile.gettempdir()
     file_path = os.path.join(
         tmp_dir, "".join(random.choices(string.ascii_letters + string.digits, k=21))
     )

@@ -322,6 +322,7 @@ def to_sql(
     print_output: bool = True,
     delimiter: str = None,
     quotechar: str = None,
+    tmp_dir: str = None,
 ):
     """
     Writes the pandas DataFrame to a SQL table or view.
@@ -394,7 +395,7 @@ def to_sql(
     _quotechar = get_quotechar(df) if quotechar is None else quotechar
 
     # save to temp path
-    csv_file_path = get_temp_file()
+    csv_file_path = get_temp_file(tmp_dir)
     # replace bools with 1 or 0, this is what pandas native does when writing to SQL Server
     df.replace({True: 1, False: 0}).to_csv(
         path_or_buf=csv_file_path,
@@ -410,7 +411,7 @@ def to_sql(
     logger.debug(f"Saved dataframe to temp CSV file at {csv_file_path}")
 
     # build format file
-    fmt_file_path = get_temp_file()
+    fmt_file_path = get_temp_file(tmp_dir)
 
     sql_item_exists = _sql_item_exists(
         sql_type=sql_type, schema=schema, table_name=table_name, creds=creds
