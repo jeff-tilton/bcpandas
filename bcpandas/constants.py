@@ -4,6 +4,7 @@ Created on Sat Aug  3 23:20:19 2019
 @author: ydima
 """
 
+import logging
 import os
 import string
 import sys
@@ -20,7 +21,7 @@ class BCPandasValueError(BCPandasException):
 
 
 IS_WIN32 = sys.platform == "win32"
-
+logger = logging.getLogger(__name__)
 # BCP terms
 IN = "in"
 OUT = "out"
@@ -37,9 +38,9 @@ IF_EXISTS_OPTIONS = ("append", "replace", "fail")
 # Text settings
 invalid_delims = ("'", '"', "\\")
 _DELIMITER_OPTIONS = (
-    string.ascii_letters
+    "".join(set(string.punctuation) - set(invalid_delims))
+    + string.ascii_letters
     + string.digits
-    + "".join(set(string.punctuation) - set(invalid_delims))
     + "\t"
 )
 _QUOTECHAR_OPTIONS = ('"', "'", "`", "~")
@@ -70,6 +71,7 @@ https://docs.microsoft.com/en-us/sql/relational-databases/import-export/specify-
 def get_delimiter(df: pd.DataFrame) -> str:
     for delim in _DELIMITER_OPTIONS:
         if not df.applymap(lambda x: delim in x if isinstance(x, str) else False).any().any():
+            logger.info(f"Delim: {delim}")
             return delim
     raise BCPandasValueError(error_msg.format(typ="delimiter", opts=_DELIMITER_OPTIONS))
 
